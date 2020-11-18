@@ -1,5 +1,8 @@
+import 'dart:ffi';
+
 import 'package:http/http.dart';
 import 'dart:convert';
+import 'package:intl/intl.dart';
 
 class WorldTime {
   // Properties
@@ -19,16 +22,18 @@ class WorldTime {
 
       Map data = jsonDecode(response.body);
       String datetime = data['datetime'];
-      String offset = data['utc_offset'].substring(0, 3);
+      String hourOffset = data['utc_offset'].substring(0, 3);
+      String minuteOffSet = data['utc_offset'].replaceRange(1, 4, "");
 
       DateTime now = DateTime.parse(datetime);
-      now = now.add(Duration(hours: int.parse(offset)));
+      now = now.add(Duration(
+          hours: int.parse(hourOffset), minutes: int.parse(minuteOffSet)));
       print(now);
 
-      time = now.toString();
+      time = DateFormat.jm().format(now);
     } catch (e) {
       print("caught error: $e");
-      time = "Could not retrieve time data";
+      time = "N/A";
     }
   }
 }
